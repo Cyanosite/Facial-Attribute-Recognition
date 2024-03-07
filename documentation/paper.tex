@@ -72,8 +72,8 @@ Facial attribute recognition, a vital task in computer vision, has undergone sig
 \subsection{Earlier Approaches to Facial Attribute Recognition using Deep Learning}
 The advent of deep learning revolutionized facial attribute recognition by enabling end-to-end learning of feature representations directly from raw data. Convolutional Neural Networks (CNNs) emerged as the backbone of many state-of-the-art systems, leveraging their ability to automatically learn hierarchical features.
 
-\citet{DBLP:journals/corr/HandC16} have developed a multi-task deep CNN for attribute classification.
-The proposed multi-task deep convolutional neural network (MCNN) architecture, along with an auxiliary network (MCNN-AUX), significantly improves attribute classification accuracy compared to traditional methods.
+\citet{DBLP:journals/corr/HandC16} have developed a multi-task deep convolutional neural network (MCNN) for attribute classification.
+The proposed architecture, along with an auxiliary network (AUX), significantly improves attribute classification accuracy compared to traditional methods.
 Their method achieved state-of-the-art performance on various attributes from the CelebA and LFWA datasets, with some attributes showing up to a 15\% improvement over other methods.
 The MCNN architecture significantly reduces the number of parameters and training time required for attribute classification compared to independent CNNs, making it more efficient.
 The learned relationships among attributes in the auxiliary network provide insights into the correlations between different attributes, contributing to a better understanding of the underlying data.
@@ -82,21 +82,38 @@ The learned relationships among attributes in the auxiliary network provide insi
 Their findings underscore the importance of leveraging data augmentation as a powerful strategy to enhance model robustness and performance in various tasks.
 By introducing variations in the training data through augmentation, models can learn more generalized features and exhibit improved performance across different scenarios.
 
-\citet{DBLP:journals/corr/HanJSC17} presents a novel approach to heterogeneous face attribute estimation using Deep Multi-Task Learning (DMTL) with convolutional neural networks (CNNs).
-The main objective is to jointly estimate multiple attributes such as age, gender, race, hair length, etc., from a single face image.
+\citet{DBLP:journals/corr/HanJSC17} present a novel approach to heterogeneous face attribute estimation using Deep Multi-Task Learning (DMTL) with convolutional neural networks (CNNs).
 Unlike previous methods that either focused on estimating a single attribute or used separate models for each attribute without considering attribute correlation and heterogeneity, the proposed DMTL approach addresses these issues explicitly.
 The DMTL framework consists of shared feature learning for all attributes followed by category-specific feature learning for heterogeneous attribute categories.
-This allows the model to capture both attribute correlation and heterogeneity effectively.
-The shared feature learning phase exploits relationships between attributes to achieve robust and discriminative feature representation, while the category-specific feature learning phase fine-tunes shared features for optimal estimation of each heterogeneous attribute category.
 To handle attribute heterogeneity, the paper categorizes attributes into nominal vs. ordinal and holistic vs. local.
 Nominal attributes, such as race, are handled using classification schemes with cross-entropy loss, while ordinal attributes, such as age, are handled using regression schemes with Euclidean loss.
 Additionally, attributes are categorized as holistic or local based on whether they describe characteristics of the whole face or local facial components, respectively.
-This leads to the creation of four types of subnetworks: holistic-nominal, holistic-ordinal, local-nominal, and local-ordinal, each utilizing appropriate loss functions based on the attribute type.
 The proposed DMTL approach outperforms state-of-the-art methods in face attribute estimation, as demonstrated through experiments on various benchmark datasets.
 The approach not only achieves high accuracy but also demonstrates excellent generalization ability, particularly in cross-database testing scenarios.
-Furthermore, the paper introduces the LFW+ database, an extension of the public-domain LFW dataset, with heterogeneous demographic attributes obtained via crowdsourcing.
-In summary, this paper presents a comprehensive approach to heterogeneous face attribute estimation using DMTL, addressing attribute correlation and heterogeneity effectively through shared and category-specific feature learning.
-The proposed method achieves superior performance compared to existing approaches and demonstrates excellent generalization ability across diverse datasets.
+
+\subsection{Transforming Image Recognition: A Comparative Review of Transformer Networks Versus CNNs}
+The transformer architecture, initially proposed for natural language processing (NLP) tasks, has recently been applied to computer vision tasks, including image recognition and object detection,
+however the application of transformer models to facial attribute recognition has been relatively limited.
+In this section we review the recent work on the application of transformer models to computer vision tasks, with one example of their application in the domain.
+
+One notable approach is the Vision Transformer (ViT) by \citet{DBLP:journals/corr/abs-2010-11929}, which treats image patches as tokens (similar to words in NLP) and processes them using a standard Transformer architecture.
+ViT achieves impressive results when pre-trained on large datasets and transferred to various image recognition benchmarks, surpassing state-of-the-art CNN-based models while requiring fewer computational resources.
+In contrast to CNNs, ViT exhibits less image-specific inductive bias, with only the MLP layers being local, while the self-attention layers are global.
+Positional information is preserved through the addition of learnable position embeddings. 
+
+The Swin Transformer by \citet{DBLP:journals/corr/abs-2103-14030} addresses the challenges of the ViTs by proposing a hierarchical Transformer architecture with shifted windows.
+This design enables modeling at various scales while maintaining linear computational complexity with respect to image size, while enhancing modeling power without sacrificing computational efficiency.
+
+It has been demonstrated by \citet{liu2022transfa} that the transformer architecture can be effectively applied to facial attribute recognition tasks.
+Inspired by the visualization of feature attention map of different attributes, they naturally group attributes with similar attention regions into the same category.
+The proposed TransFa model utilizing the Swin Transformer architecture achieves state-of-the-art performance on the CelebA dataset, outperforming previous methods.
+
+One drawback of the transformer architecture is its computational complexity, which is higher than that of CNNs.
+However, \citet{li2022efficientformer} have proposed the EfficientFormer, a lightweight transformer architecture that achieves competitive performance with state-of-the-art CNNs while being more efficient in terms of computational resources.
+With an inference speed lower than the frametime of most displays, makes this model suitable for real-time applications.
+\citet{li2022rethinking} later introduced the second version of the EfficientFormer, which further improves the performance of the model while maintaining its efficiency.
+They achieved this by giving the multi-head self attention mechanism (MHSA) an input computed by several local convolutional layers, which allows the model to capture local features more effectively and reducing the number of parameters given to the MHSA.
+Furthermore they improve on the MHSA by downsampling the input and interpolating the output, which allows the model to capture global features more efficiently.
 
 \section{Headings: first level}
 \label{sec:headings}
