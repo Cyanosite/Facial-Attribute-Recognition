@@ -53,24 +53,25 @@ class Head(nn.Module):
         output = torch.cat(output, dim=1)
         return output
 
-def train_loop(dataloader, model, loss_fn, optimizer, device):
+def train_loop(dataloader, model, loss_fn, optimizer, device, epochs = 5):
     size = len(dataloader.dataset)
     model.train()
-    for batch, (x, y) in enumerate(dataloader):
-        x = x.to(device)
-        y = transform_y(y)
-        y = y.to(device)
-    
-        y_pred = model(x)
-        loss = loss_fn(y_pred, y)
+    for epoch in range(1, epochs+1):
+        for batch, (x, y) in enumerate(dataloader):
+            x = x.to(device)
+            y = transform_y(y)
+            y = y.to(device)
+        
+            y_pred = model(x)
+            loss = loss_fn(y_pred, y)
 
-        loss.backward()
-        optimizer.step()
-        optimizer.zero_grad()
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
 
-        if batch % 100 == 0:
-            loss, current = loss.item(), batch * model.batch_size + len(x)
-            print(f"loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
+            if batch % 100 == 0:
+                loss, current = loss.item(), batch * model.batch_size + len(x)
+                print(f"Epoch: {epoch}/{epochs} loss: {loss:>7f}  [{current:>5d}/{size:>5d}]")
 
 def test_loop(dataloader, model, loss_fn, device):
     model.eval()
@@ -78,8 +79,6 @@ def test_loop(dataloader, model, loss_fn, device):
     num_batches = len(dataloader)
     test_loss, correct = 0, 0
 
-    # Evaluating the model with torch.no_grad() ensures that no gradients are computed during test mode
-    # also serves to reduce unnecessary gradient computations and memory usage for tensors with requires_grad=True
     with torch.no_grad():
         for x, y in dataloader:
             x = x.to(device)
@@ -87,20 +86,18 @@ def test_loop(dataloader, model, loss_fn, device):
             y = y.to(device)
             pred = model(x)
             test_loss += loss_fn(pred, y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+            pred_binary = (pred > 0.5).type(torch.float)
+            correct += ((pred_binary == y) & (y == 0) | (pred_binary == y) & (y == 1)).type(torch.float).sum().item()
 
     test_loss /= num_batches
-    correct /= size
+    correct /= num_batches * 64 * 40
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
 
 def transform_y(y):
-    mapping = {2: 0, 10: 1, 13: 2, 18: 3, 20: 4, 25: 5, 26: 6, 31: 7, 39: 8, 4: 9, 5: 10, 8: 11, 9: 12, 11: 13, 17: 14, 28: 15, 32: 16, 33: 17, 35: 18, 1: 19, 3: 20, 12: 21, 15: 22, 23: 23, 7: 24, 27: 25, 0: 26, 6: 27, 14: 28, 16: 29, 21: 30, 22: 31, 24: 32, 30: 33, 36: 34, 19: 35, 29: 36, 34: 37, 37: 38, 38: 39}
-    #attributes = ['5_o_Clock_Shadow', 'Arched_Eyebrows', 'Attractive', 'Bags_Under_Eyes', 'Bald', 'Bangs', 'Big_Lips', 'Big_Nose', 'Black_Hair', 'Blond_Hair', 'Blurry', 'Brown_Hair', 'Bushy_Eyebrows', 'Chubby', 'Double_Chin', 'Eyeglasses', 'Goatee', 'Gray_Hair', 'Heavy_Makeup', 'High_Cheekbones', 'Male', 'Mouth_Slightly_Open', 'Mustache', 'Narrow_Eyes', 'No_Beard', 'Oval_Face', 'Pale_Skin', 'Pointy_Nose', 'Receding_Hairline', 'Rosy_Cheeks', 'Sideburns', 'Smiling', 'Straight_Hair', 'Wavy_Hair', 'Wearing_Earrings', 'Wearing_Hat', 'Wearing_Lipstick', 'Wearing_Necklace', 'Wearing_Necktie', 'Young']
-    #new_attributes = ['Attractive', 'Blurry', 'Chubby', 'Heavy_Makeup', 'Male', 'Oval_Face', 'Pale_Skin', 'Smiling', 'Young', 'Bald', 'Bangs', 'Black_Hair', 'Blond_Hair', 'Brown_Hair', 'Gray_Hair', 'Receding_Hairline', 'Straight_Hair', 'Wavy_Hair', 'Wearing_Hat', 'Arched_Eyebrows', 'Bags_Under_Eyes', 'Bushy_Eyebrows', 'Eyeglasses', 'Narrow_Eyes', 'Big_Nose', 'Pointy_Nose', '5_o_Clock_Shadow', 'Big_Lips', 'Double_Chin', 'Goatee', 'Mouth_Slightly_Open', 'Mustache', 'No_Beard', 'Sideburns', 'Wearing_Lipstick', 'High_Cheekbones', 'Rosy_Cheeks', 'Wearing_Earrings', 'Wearing_Necklace', 'Wearing_Necktie']
-    #y = {attributes.index(v): new_attributes.index(v) for k, v in y.items()}
+    mapping = [26, 19, 0, 20, 9, 10, 27, 24, 11, 12, 1, 13, 21, 2, 28, 22, 29, 14, 3, 35, 4, 30, 31, 23, 32, 5, 6, 25, 15, 36, 33, 7, 16, 17, 37, 18, 34, 38, 39, 8]
     for batch, x in enumerate(y):
         new_batch = torch.zeros(40, dtype=torch.float32)
-        for i in range(40):
-            new_batch[mapping[i]] = x[i]
+        for i, to in enumerate(mapping):
+            new_batch[to] = x[i]
         y[batch] = new_batch
     return y.to(torch.float32)
