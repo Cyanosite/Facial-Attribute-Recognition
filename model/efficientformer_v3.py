@@ -1,6 +1,6 @@
 from torch import nn
 import torch
-from efficientformer_v2 import EfficientFormerV2, EfficientFormer_depth, EfficientFormer_width, expansion_ratios_S0
+from efficientformer_v2 import EfficientFormerV2, EfficientFormer_depth, EfficientFormer_width, expansion_ratios_S2
 
 class EfficientFormerV3(nn.Module):
     def __init__(self, batch_size = 32) -> None:
@@ -9,12 +9,12 @@ class EfficientFormerV3(nn.Module):
         self.batch_size = batch_size
 
         efficientformer = EfficientFormerV2(
-            layers = EfficientFormer_depth['S0'],
-            embed_dims=EfficientFormer_width['S0'],
+            layers = EfficientFormer_depth['S2'],
+            embed_dims=EfficientFormer_width['S2'],
             downsamples=[True, True, True, True, True],
             vit_num=2,
             drop_path_rate=0.0,
-            e_ratios=expansion_ratios_S0,
+            e_ratios=expansion_ratios_S2,
             num_classes=0,
             resolution=218,
             distillation=False
@@ -29,11 +29,11 @@ class EfficientFormerV3(nn.Module):
         return self.network(x)
 
 def head_block(output_features):
-    num_features = EfficientFormer_width['S0'][-1]
+    num_features = EfficientFormer_width['S2'][-1]
     return nn.Sequential(
-        nn.Linear(num_features, 2048),
+        nn.Linear(num_features, 1024),
         nn.ReLU(),
-        nn.Linear(2048, 512),
+        nn.Linear(1024, 512),
         nn.ReLU(),
         nn.Linear(512, output_features),
         nn.Sigmoid()
@@ -75,9 +75,12 @@ def train_loop(dataloader, model, loss_fn, optimizer, device, epochs = 5):
 
 def test_loop(dataloader, model, loss_fn, device):
     model.eval()
-    size = len(dataloader.dataset)
+    #size = len(dataloader.dataset)
     num_batches = len(dataloader)
     test_loss, correct = 0, 0
+
+    correct_attributes = [0] * 40
+    baseline = [0] * 40
 
     with torch.no_grad():
         for x, y in dataloader:
@@ -88,10 +91,14 @@ def test_loop(dataloader, model, loss_fn, device):
             test_loss += loss_fn(pred, y).item()
             pred_binary = (pred > 0.5).type(torch.float)
             correct += ((pred_binary == y) & (y == 0) | (pred_binary == y) & (y == 1)).type(torch.float).sum().item()
+            correct_attributes += (pred_binary == y).type(torch.float).sum(dim=0).cpu().numpy()
+            baseline += y.sum(dim=0).cpu().numpy()
 
     test_loss /= num_batches
-    correct /= num_batches * 64 * 40
+    correct /= num_batches * model.batch_size * 40
     print(f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+    return (correct_attributes / (num_batches * model.batch_size), baseline / (num_batches * model.batch_size))
+
 
 def transform_y(y):
     mapping = [26, 19, 0, 20, 9, 10, 27, 24, 11, 12, 1, 13, 21, 2, 28, 22, 29, 14, 3, 35, 4, 30, 31, 23, 32, 5, 6, 25, 15, 36, 33, 7, 16, 17, 37, 18, 34, 38, 39, 8]
