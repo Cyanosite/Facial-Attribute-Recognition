@@ -14,4 +14,4 @@ This project aims to recognize various facial attributes in images. This is achi
 
 ## Contact
 
-Your Name - zsomborszenyan@edu.bme.hu
+Zsombor Szenyán - zsomborszenyan@edu.bme.hu
