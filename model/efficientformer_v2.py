@@ -12,7 +12,6 @@ import itertools
 
 from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.models.layers import DropPath, trunc_normal_
-from timm.models.registry import register_model
 import collections
 
 def to_2tuple(x):
@@ -628,58 +627,3 @@ def _cfg(url='', **kwargs):
         **kwargs
     }
 
-
-@register_model
-def efficientformerv2_s0(pretrained=False, **kwargs):
-    model = EfficientFormerV2(
-        layers=EfficientFormer_depth['S0'],
-        embed_dims=EfficientFormer_width['S0'],
-        downsamples=[True, True, True, True, True],
-        vit_num=2,
-        drop_path_rate=0.0,
-        e_ratios=expansion_ratios_S0,
-        **kwargs)
-    model.default_cfg = _cfg(crop_pct=0.9)
-    return model
-
-
-@register_model
-def efficientformerv2_s1(pretrained=False, **kwargs):
-    model = EfficientFormerV2(
-        layers=EfficientFormer_depth['S1'],
-        embed_dims=EfficientFormer_width['S1'],
-        downsamples=[True, True, True, True],
-        vit_num=2,
-        drop_path_rate=0.0,
-        e_ratios=expansion_ratios_S1,
-        **kwargs)
-    model.default_cfg = _cfg(crop_pct=0.9)
-    return model
-
-
-@register_model
-def efficientformerv2_s2(pretrained=False, **kwargs):
-    model = EfficientFormerV2(
-        layers=EfficientFormer_depth['S2'],
-        embed_dims=EfficientFormer_width['S2'],
-        downsamples=[True, True, True, True],
-        vit_num=4,
-        drop_path_rate=0.02,
-        e_ratios=expansion_ratios_S2,
-        **kwargs)
-    model.default_cfg = _cfg(crop_pct=0.9)
-    return model
-
-
-@register_model
-def efficientformerv2_l(pretrained=False, **kwargs):
-    model = EfficientFormerV2(
-        layers=EfficientFormer_depth['L'],
-        embed_dims=EfficientFormer_width['L'],
-        downsamples=[True, True, True, True],
-        vit_num=6,
-        drop_path_rate=0.1,
-        e_ratios=expansion_ratios_L,
-        **kwargs)
-    model.default_cfg = _cfg(crop_pct=0.9)
-    return model

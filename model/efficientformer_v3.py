@@ -16,7 +16,7 @@ class EfficientFormerV3(nn.Module):
             drop_path_rate=0.0,
             e_ratios=expansion_ratios_S2,
             num_classes=0,
-            resolution=218,
+            resolution=178,
             distillation=False
         )
         self.network = nn.Sequential(
