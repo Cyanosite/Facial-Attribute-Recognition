@@ -21,6 +21,7 @@ The baseline being predicting attributes on the test dataset based on attribute 
 1. Clone the repository: `git clone https://github.com/Cyanosite/Intel-Image-Classification.git`
 2. Navigate into the project directory: `cd Facial-Attribute-Recognition`
 3. Install the required dependencies: `pip install -r requirements.txt`
+4. Execute the `solution.ipynb` notebook to train the model, evaluate its performance, and reproduce the results.
 
 ## Contact
 
