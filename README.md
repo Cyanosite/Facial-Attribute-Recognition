@@ -6,15 +6,16 @@
 
 This project aims to recognize various facial attributes in images. This is achieved by using the Transformer architecture, a model architecture that uses self-attention mechanisms and has been successful in various tasks in the field of natural language processing.
 
+My model is built upon the EfficientFormerV2 transformer backbone, a creation of Snap Inc., Northeastern University, and UC Berkeley. More details can be found [here](https://github.com/snap-research/EfficientFormer).
+
 ## Results
 
 The current iteration of the model achieves 90.7% accuracy on the CelebA dataset.
-It uses 15.6M parameters and with an inference latency of 1.18ms on an iPhone 14 Pro Max it is capable of real-time face attribute classification.
+It uses 15.6M parameters and with an inference latency of 1.18ms on an iPhone 14 Pro Max it is well suited of real-time facial attribute classification.
 
-The images below show my model compared to state of the art models.
-The baseline being predicting attributes on the test dataset based on attribute distribution on the training dataset, where if an attribute probability is below 0.5 then it is subtracted from 1.
-![Radar Plot showing the results compared to other models](images/radarplot.png)
-![Bar Chart showing the results compared to other models](images/barchart.png)
+Below are comparisons of our model with other state-of-the-art models. The baseline is established by predicting attributes on the test dataset based on the attribute distribution in the training dataset. If an attribute probability is below 0.5, it is subtracted from 1.
+![Comparison of results with other models in a Radar Plot](images/radarplot.png)
+![Comparison of results with other models in a Bar Chart](images/barchart.png)
 
 ## Installation and Setup
 
