@@ -3,3 +3,4 @@ data
 build/
 __pycache__/
 **.mlpackage
+**.pt
