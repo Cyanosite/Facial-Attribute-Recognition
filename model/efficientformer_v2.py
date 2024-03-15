@@ -10,7 +10,6 @@ import math
 from typing import Dict
 import itertools
 
-from timm.data import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from timm.models.layers import DropPath, trunc_normal_
 import collections
 
@@ -615,15 +614,4 @@ class EfficientFormerV2(nn.Module):
             cls_out = self.head(x.flatten(2).mean(-1))
         # for image classification
         return cls_out
-
-
-def _cfg(url='', **kwargs):
-    return {
-        'url': url,
-        'num_classes': 1000, 'input_size': (3, 224, 224), 'pool_size': None,
-        'crop_pct': .95, 'interpolation': 'bicubic',
-        'mean': IMAGENET_DEFAULT_MEAN, 'std': IMAGENET_DEFAULT_STD,
-        'classifier': 'head',
-        **kwargs
-    }
 
