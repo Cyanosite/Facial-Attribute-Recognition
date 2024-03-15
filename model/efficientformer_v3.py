@@ -2,6 +2,7 @@ from torch import nn
 import torch
 from efficientformer_v2 import EfficientFormerV2, EfficientFormer_depth, EfficientFormer_width, expansion_ratios_S2
 
+
 class EfficientFormerV3(nn.Module):
     def __init__(self, batch_size = 32) -> None:
         super().__init__()
@@ -21,9 +22,10 @@ class EfficientFormerV3(nn.Module):
         )
         self.network = nn.Sequential(
             efficientformer,
-            Head()
+            Head(),
+            nn.Sigmoid()
         )
-
+    # Regardless of model size results are the same: Vanishing gradient?
 
     def forward(self, x):
         return self.network(x)
@@ -36,7 +38,6 @@ def head_block(output_features):
         nn.Linear(1024, 512),
         nn.ReLU(),
         nn.Linear(512, output_features),
-        nn.Sigmoid()
     )
 
 
