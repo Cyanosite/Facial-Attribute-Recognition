@@ -1,6 +1,7 @@
-coremltools==7.1
-matplotlib==3.8.3
-numpy==1.26.4
-timm==0.9.16
-torch==2.2.1
-torchvision==0.17.1
+coremltools
+matplotlib
+timm
+torch
+torchvision
+gdown
+ipykernel
