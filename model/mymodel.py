@@ -62,15 +62,12 @@ class MyModel(nn.Module):
             embed_dims=EfficientFormer_width["S2"],
             downsamples=[True, True, True, True, True],
             vit_num=2,
-            drop_path_rate=0.0,
             e_ratios=expansion_ratios_S2,
             num_classes=0,
             resolution=178,
             distillation=False,
         )
         self.network = nn.Sequential(efficientformer, Head(), nn.Sigmoid())
-
-    # Regardless of model size results are the same: Vanishing gradient?
 
     def forward(self, x):
         return self.network(x)
