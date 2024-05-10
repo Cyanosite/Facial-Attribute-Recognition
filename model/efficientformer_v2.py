@@ -10,7 +10,7 @@ import os
 
 import torch
 import torch.nn as nn
-from timm.models.layers import DropPath, trunc_normal_
+from timm.models.layers import trunc_normal_
 
 
 def to_2tuple(x):
@@ -528,7 +528,6 @@ class AttnFFN(nn.Module):
         act_layer=nn.ReLU,
         norm_layer=nn.LayerNorm,
         drop=0.0,
-        drop_path=0.0,
         use_layer_scale=True,
         layer_scale_init_value=1e-5,
         resolution=7,
@@ -548,7 +547,6 @@ class AttnFFN(nn.Module):
             mid_conv=True,
         )
 
-        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.use_layer_scale = use_layer_scale
         if use_layer_scale:
             self.layer_scale_1 = nn.Parameter(
@@ -562,12 +560,12 @@ class AttnFFN(nn.Module):
 
     def forward(self, x):
         if self.use_layer_scale:
-            x = x + self.drop_path(self.layer_scale_1 * self.token_mixer(x))
-            x = x + self.drop_path(self.layer_scale_2 * self.mlp(x))
+            x = x + (self.layer_scale_1 * self.token_mixer(x))
+            x = x + (self.layer_scale_2 * self.mlp(x))
 
         else:
-            x = x + self.drop_path(self.token_mixer(x))
-            x = x + self.drop_path(self.mlp(x))
+            x = x + (self.token_mixer(x))
+            x = x + (self.mlp(x))
         return x
 
 
@@ -579,7 +577,6 @@ class FFN(nn.Module):
         mlp_ratio=4.0,
         act_layer=nn.GELU,
         drop=0.0,
-        drop_path=0.0,
         use_layer_scale=True,
         layer_scale_init_value=1e-5,
     ):
@@ -594,7 +591,6 @@ class FFN(nn.Module):
             mid_conv=True,
         )
 
-        self.drop_path = DropPath(drop_path) if drop_path > 0.0 else nn.Identity()
         self.use_layer_scale = use_layer_scale
         if use_layer_scale:
             self.layer_scale_2 = nn.Parameter(
@@ -604,9 +600,9 @@ class FFN(nn.Module):
 
     def forward(self, x):
         if self.use_layer_scale:
-            x = x + self.drop_path(self.layer_scale_2 * self.mlp(x))
+            x = x + (self.layer_scale_2 * self.mlp(x))
         else:
-            x = x + self.drop_path(self.mlp(x))
+            x = x + (self.mlp(x))
         return x
 
 
@@ -619,7 +615,6 @@ def eformer_block(
     act_layer=nn.GELU,
     norm_layer=nn.LayerNorm,
     drop_rate=0.0,
-    drop_path_rate=0.0,
     use_layer_scale=True,
     layer_scale_init_value=1e-5,
     vit_num=1,
@@ -629,7 +624,7 @@ def eformer_block(
     blocks = []
     for block_idx in range(layers[index]):
         block_dpr = (
-            drop_path_rate * (block_idx + sum(layers[:index])) / (sum(layers) - 1)
+            (block_idx + sum(layers[:index])) / (sum(layers) - 1)
         )
         mlp_ratio = e_ratios[str(index)][block_idx]
         if index >= 2 and block_idx > layers[index] - 1 - vit_num:
@@ -644,7 +639,6 @@ def eformer_block(
                     act_layer=act_layer,
                     norm_layer=norm_layer,
                     drop=drop_rate,
-                    drop_path=block_dpr,
                     use_layer_scale=use_layer_scale,
                     layer_scale_init_value=layer_scale_init_value,
                     resolution=resolution,
@@ -659,7 +653,6 @@ def eformer_block(
                     mlp_ratio=mlp_ratio,
                     act_layer=act_layer,
                     drop=drop_rate,
-                    drop_path=block_dpr,
                     use_layer_scale=use_layer_scale,
                     layer_scale_init_value=layer_scale_init_value,
                 )
@@ -683,7 +676,6 @@ class EfficientFormerV2(nn.Module):
         down_stride=2,
         down_pad=1,
         drop_rate=0.0,
-        drop_path_rate=0.0,
         use_layer_scale=True,
         layer_scale_init_value=1e-5,
         fork_feat=False,
@@ -714,7 +706,6 @@ class EfficientFormerV2(nn.Module):
                 act_layer=act_layer,
                 norm_layer=norm_layer,
                 drop_rate=drop_rate,
-                drop_path_rate=drop_path_rate,
                 use_layer_scale=use_layer_scale,
                 layer_scale_init_value=layer_scale_init_value,
                 resolution=math.ceil(resolution / (2 ** (i + 2))),
