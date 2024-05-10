@@ -21,8 +21,10 @@ Below are comparisons of our model with other state-of-the-art models. The basel
 
 1. Clone the repository: `git clone https://github.com/Cyanosite/Intel-Image-Classification.git`
 2. Navigate into the project directory: `cd Facial-Attribute-Recognition`
-3. Install the required dependencies: `pip install -r requirements.txt`
-4. Execute the `solution.ipynb` notebook to train the model, evaluate its performance, and reproduce the results.
+3. (Optional) Create a virtual environtment and select it: `python -m venv .venv`
+4. Install the required dependencies: `pip install -r requirements.txt`
+5. Execute the `solution.ipynb` notebook to train the model, evaluate its performance, and reproduce the results.
+6. If you get the error `FileURLRetrievalError: Too many users have viewed or downloaded this file recently.` then download the dataset manually and put it under `./model/data/celeba`.
 
 ## Contact
 
