@@ -67,7 +67,7 @@
   \tasktitle{Real-time Facial Attribute Recognition using Transformer networks} 
 
   %\taskdescription
-  \taskdescription{In my project laboratory, I've researched the state-of-the-art solutions in the field of facial attribute recognition and improved on efficiency of existing methods by leveraging Transformer networks.
+  \taskdescription{In my project laboratory, I've researched the state-of-the-art solutions in the field of facial attribute recognition and improved on the efficiency of existing methods by leveraging Transformer networks.
   By harnessing the power of Transformer architecture, I've constructed a neural network that excels in real-time recognition of facial attributes.
   This new model not only ensures efficient and fast processing but also boasts accuracy levels on par with the current state-of-the-art systems.
   With its ability to swiftly and accurately recognize facial attributes, this project opens doors to real-time applications in various fields, from security systems to personalized user experiences.}
@@ -110,11 +110,13 @@ Facial Landmarks: These are specific points on a face, such as the corners of th
 
 Feature Extraction: This involves the process of extracting meaningful information from facial images, which can include both low-level features like edges and textures and high-level features like facial expressions or facial hair.
 
+Facial Attribute Classification: This task involves categorizing facial images based on whether they possess specific predefined attributes or not. The paper focuses on this specific area.
+
 Machine Learning Algorithms: Various machine learning algorithms are utilized in facial attribute recognition, including traditional techniques such as Support Vector Machines (SVMs) and decision trees, as well as deep learning models like Convolutional Neural Networks (CNNs) and transformer architectures.
 
-Convolutional Neural Networks (CNNs): CNNs have been pivotal in revolutionizing facial attribute recognition by enabling end-to-end learning of hierarchical features directly from raw image data. They automatically learn and extract features at different levels of abstraction, making them well-suited for tasks like facial attribute classification.
+Convolutional Neural Networks \citet{DBLP:journals/corr/OSheaN15} (CNNs): CNNs have been pivotal in revolutionizing facial attribute recognition by enabling end-to-end learning of hierarchical features directly from raw image data. They automatically learn and extract features at different levels of abstraction, making them well-suited for tasks like facial attribute classification.
 
-Transformer Architectures: Initially developed for natural language processing tasks, transformer architectures have recently been applied to computer vision tasks, including facial attribute recognition. These architectures excel at capturing long-range dependencies and modeling complex relationships within the data, potentially leading to improved performance in facial attribute recognition tasks.
+Transformer Architectures \citet{DBLP:journals/corr/VaswaniSPUJGKP17}: Initially developed for natural language processing tasks, transformer architectures have recently been applied to computer vision tasks, including facial attribute recognition. These architectures excel at capturing long-range dependencies and modeling complex relationships within the data, potentially leading to improved performance in facial attribute recognition tasks.
 
 The theoretical underpinnings of facial attribute recognition often involve the application of deep learning models like CNNs or traditional computer vision techniques. CNNs, with their hierarchical feature extraction capabilities, have become the backbone of many state-of-the-art facial attribute recognition systems. They can automatically learn and extract relevant features from facial images, making them particularly well-suited for tasks like attribute classification.
 
@@ -376,8 +378,6 @@ This performance metric highlights the model's proficiency in correctly identify
 Additionally, the model exhibits a recall rate of 73.0\%, indicating its ability to effectively capture true positive instances among all actual positive cases.
 
 Furthermore, the specificity of our model stands at 96.3\%, underscoring its capability to correctly identify negative instances among all actual negative cases.
-
-Comparison with Existing Models:
 
 My model approaches state-of-the-art performance in facial attribute recognition, showcasing competitive accuracy while offering notable advantages in training speed, inference speed, and model size.
 Specifically, the model achieves an accuracy of 90.9\%, only marginally lagging behind the performance of the model presented in the TransFA paper \citet{liu2022transfa}, which reported an accuracy of 91.9\%.
