@@ -1,0 +1,74 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Do not modify if you don't know what you are doing!!!!
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{myheadings} % use heading 
+
+\newcommand{\projectlaboratorytitle}{
+  \begin{center}
+    \huge{\textbf{Project Laboratory Report}}
+    
+    \smallskip
+    \small{Department of Telecommunications and Media Informatics}
+  \end{center}
+  \bigskip
+} 
+
+% #1=Name, #2=Neptun, #3=Specialization, #4=Email, #5 Supervisor-1, #6 Supervisor-1-Email, #7 Supervisor-2, #8 Supervisor-2-Email
+\newcommand{\projectlaboratoryauthor}[8]{
+
+\begin{center}
+  \begin{tabular}{ l c }
+  Author:         & \textbf{#1}  \\
+  Neptun:         & \textbf{\texttt{#2}}  \\
+  Specialization: & \textbf{#3}  \\
+  E-mail address: & \href{mailto:#4}{\textbf{#4}}  \\
+  Supervisor:     & \textbf{#5}  \\
+  E-mail addres:  & \href{mailto:#6}{\textbf{#6}} \\
+  Co-Supervisor:  & \textbf{#7}  \\
+  E-mail addres:  & \href{mailto:#8}{\textbf{#8}} \\
+  
+  \end{tabular}
+\end{center}
+\bigskip
+
+}
+
+% Arguments: #1=Semester (format: xxxx/xx , #2=I/II (without dot!))
+\newcommand{\semester}[2]{
+  \large\textbf{#1 #2. semester}
+}
+
+% Arguments: #1=Title
+\newcommand{\tasktitle}[1]{
+  \begin{center}
+    \LARGE\textbf{Title: #1}
+    \bigskip
+  \end{center}
+}
+
+% Arguments: #1=Description
+\newcommand{\taskdescription}[1]{
+\begin{center}
+  \Large\textbf{Task} 
+\end{center}
+#1
+\newline
+\bigskip
+}
+
+% References
+% \def\references#1{\renewcommand{%
+% \baselinestretch}{1}\list
+%  {\small [\arabic{enumi}]}{\settowidth\labelwidth{[#1]}\leftmargin\labelwidth
+%  \advance\leftmargin\labelsep
+%  \usecounter{enumi}}
+%  \def\newblock{\small \hskip .11em plus .33em minus .07em}
+%  \sloppy\clubpenalty4000\widowpenalty4000
+%  \sfcode`\.=1000\relax}
+% \let\endreferences=\endlist%
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "template"
+%%% End: 
