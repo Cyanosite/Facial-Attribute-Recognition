@@ -441,6 +441,9 @@ Dead code elimination removes unnecessary operations or layers from the model, r
 Transpose optimization rearranges data in the model to improve memory access patterns and reduce latency.
 
 The converted Core ML model exhibited remarkable efficiency, achieving inference speeds as low as 1.18 milliseconds on high-end devices such as the iPhone 14 Pro Max.
+After the conversion process I reran the model on the CelebA dataset to ensure that the conversion process did not affect the model's performance.
+The model miraculously slightly improved its accuracy, achieving a score of 91\% on the test dataset, demonstrating the robustness and reliability of the Core ML conversion process.
+The accuracy improvement can be attributed to the quantization process which can sometimes improve the model's performance by rounding off the weights and biases to the nearest 16-bit floating point number in a way that improves the model's performance.
 Crucially, the model leveraged the device's neural engine for each calculation, harnessing specialized hardware acceleration to expedite inference tasks while conserving battery life.
 
 \begin{figure}[h]
