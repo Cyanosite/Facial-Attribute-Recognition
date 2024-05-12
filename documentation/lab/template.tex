@@ -315,6 +315,8 @@ The sigmoid function produces probabilities indicating the likelihood of each at
 By adopting this multi-head FFN architecture, our model effectively leverages the hierarchical structure of facial attributes, enabling precise and comprehensive attribute prediction across diverse facial regions.
 This architecture promotes holistic understanding of facial characteristics while accommodating the unique attributes associated with each region, thereby enhancing the model's performance and versatility in facial attribution recognition tasks.
 
+In total the model has 15,608,472 trainable with 12.6 million parameters in the EfficientFormerV2 backbone and the remaining parameters in the FFN heads.
+
 \subsection{Output transformation \& hyperparameters}
 \label{sec:subsection_output_transformation}
 
@@ -368,13 +370,127 @@ Training takes approximately 30 minutes to complete, with each epoch lasting aro
 \subsection{Results}
 \label{sec:subsection_results}
 
+The proposed facial attribution recognition model demonstrates promising performance on the test dataset, achieving an accuracy of 90.9\% with an average loss of 0.202585.
+This performance metric highlights the model's proficiency in correctly identifying facial attributes from input images.
+
+Additionally, the model exhibits a recall rate of 73.0\%, indicating its ability to effectively capture true positive instances among all actual positive cases.
+
+Furthermore, the specificity of our model stands at 96.3\%, underscoring its capability to correctly identify negative instances among all actual negative cases.
+
+Comparison with Existing Models:
+
+My model approaches state-of-the-art performance in facial attribute recognition, showcasing competitive accuracy while offering notable advantages in training speed, inference speed, and model size.
+Specifically, the model achieves an accuracy of 90.9\%, only marginally lagging behind the performance of the model presented in the TransFA paper \citet{liu2022transfa}, which reported an accuracy of 91.9\%.
+However, my model outperforms TransFA in terms of training speed, inference speed, and model size as that uses the Swin Transformer architecture, which is inefficient compared to the EfficientFormerV2 architecture.
+
+The DMM-CNN model by \citet{DBLP:journals/corr/abs-2002-03683} includes the parameter count and accuracy of their model, making it suitable for comparison.
+Their model used 360 million parameters compared to just 15.6 million in my model, while achieving an accuracy of 91.7\%.
+
+While there are no specific numbers reported for the specifics of the TransFA architecture regarding parameter count, training and inference speed,
+I suspect they are using the base Swin Transformer architecture as their paper reports using 12 Swin Transformer Layers, making just the backbone of their model 121 million parameters.
+Additionally their FFN heads use double the neurons in the first layer, making their head also use more parameters than mine.
+
+\begin{wrapfigure}{l}{0.5\textwidth}
+  \includegraphics[width=0.5\textwidth]{radarplot.png}
+  \centering
+  \caption[Radar plot]{Radar plot per attribute performance visualization\footnotemark}
+  \centering
+\end{wrapfigure}
+
+\footnotetext{
+  The attributes are as follows:
+  Attractive, Blurry, Chubby, Heavy Makeup, Male, Oval Face, Pale Skin, Smiling, Young
+  Bald, Bangs, Black Hair, Blond Hair, Brown Hair, Gray Hair, Receding Hairline, Straight Hair, Wavy Hair, Wearing Hat
+  Arched Eyebrows, Bags Under Eyes, Bushy Eyebrows, Eyeglasses, Narrow Eyes
+  Big Nose, Pointy Nose,
+  5 o'Clock Shadow, Big Lips, Double Chin, Goatee, Mouth Slightly Open, Mustache, No Beard, Sideburns, Wearing Lipstick
+  High Cheekbones, Rosy Cheeks, Wearing Earrings
+  Wearing Necklace, Wearing Necktie
+}
+
+In the radar plot on the left the performance of the model is visualized compared to the TransFA model.
+A Baseline performance is calculated using the distribution of attributes in the dataset, if the probability of an attribute occuring is less than 0.5 it is subtracted from 1, otherwise it is left as is.
+This subtraction is done to account for the imbalance in the dataset, as the model could achieve a high accuracy by just predicting the most common attributes.
+
+The results of my study hold significant implications for the field of facial attribute recognition and related applications.
+Despite slightly trailing behind the state-of-the-art models in accuracy, my model offers substantial improvements in terms of efficiency and resource utilization.
+The enhanced training speed, inference speed, and reduced model size make my approach particularly appealing for real-world deployment in scenarios where computational resources are limited or efficiency is paramount.
+
+In conclusion, the proposed facial attribution recognition model demonstrates competitive performance in accurately identifying facial attributes from input images.
+While achieving a commendable accuracy of 90.9\%, my model distinguishes itself through its efficiency gains in training and inference, as well as its compact model size.
+These findings underscore the potential of my approach to address the practical challenges associated with facial attribute recognition, paving the way for widespread adoption in various resource constrained applications.
+
+\subsection{iOS Demo Application}
+\label{sec:subsection_ios_demo}
+
+To demonstrate the real-time capability of my facial attribution recognition model, I developed an intuitive iOS demo application using Swift and SwiftUI.
+This application leverages the power of Core ML to deploy my PyTorch-based model directly onto iOS devices, enabling real-time inference on live camera feeds.
+
+The first step in developing the iOS application involved converting the PyTorch model into a Core ML model using the CoreMLTools library.
+This conversion process facilitated seamless integration of my model into the iOS ecosystem, allowing for efficient execution on Apple's hardware platforms.
+CoreMLTools performs optimizations tailored for inference purposes, ensuring optimal performance and resource utilization on iOS devices.
+CoreMLTools utilizes the following optimizations:
 
 
-\newpage
+In the API there are common passes and cleanup passes defined.
+For the purpose of this study only high-level, model related optimizations are listed.
+Quantization is used to convert the model to 16-bit floating point numbers, reducing the model size and improving inference speed.
+Layer fusion involves combining multiple operations or layers within the model into a single operation or layer, reducing the overall workload and improving efficiency.
+During conversion padding optimizations ensure efficient convolutions by optimizing padding operations.
+Dead code elimination removes unnecessary operations or layers from the model, reducing computational overhead and improving inference speed.
+Transpose optimization rearranges data in the model to improve memory access patterns and reduce latency.
+
+The converted Core ML model exhibited remarkable efficiency, achieving inference speeds as low as 1.18 milliseconds on high-end devices such as the iPhone 14 Pro Max.
+Crucially, the model leveraged the device's neural engine for each calculation, harnessing specialized hardware acceleration to expedite inference tasks while conserving battery life.
+
+\begin{figure}[h]
+  \includegraphics[width=\textwidth]{iOSInference.png}
+  \centering
+  \caption{iOS inference benchmark.}
+  \centering
+\end{figure}
+
+\begin{wrapfigure}{r}{0.4\textwidth}
+  \includegraphics[width=0.4\textwidth]{iOSapp.jpeg}
+  \centering
+  \caption{iOS demo application interface.}
+  \centering
+\end{wrapfigure}
+
+The iOS demo application features a user-friendly interface designed using SwiftUI, Apple's declarative framework for building user interfaces.
+Upon launching the application, users are presented with a simple yet engaging interface, showcasing a circular frame in the center of the screen.
+As users position their head within the designated circular frame, the application initiates real-time attribute recognition by capturing frames from the device's camera and passing them through the Core ML model.
+The model analyzes each frame and identifies facial attributes deemed to be present, providing instant feedback on the bottom of the screen.
+By doulbe tapping on the screen, users may stop the camera feed and model inference, allowing them to view the detected attributes in detail.
+Doulbe tapping again resumes the camera feed and model inference.
+
+Thanks to the low inference speed and efficient hardware utilization of the Core ML model, the iOS demo application delivers seamless performance with no dropped frames.
+Users can experience smooth and uninterrupted attribute recognition.
+
+My iOS demo application showcases the practical implications of a real-time facial attribution recognition model, extending its capabilities to mobile platforms and empowering users with real-time attribute recognition on their iOS devices.
+By harnessing the power of Core ML and SwiftUI, I offer an intuitive and efficient solution for facial attribute analysis, opening doors to resource constrained applications in fields such as digital health and personalization.
+
+\clearpage
 \subsection{Summary}
 \label{sec:summary}
 
-Sample text.
+During my project laboratory I researched state-of-the-art approaches in the field of facial attribute recognition, identified key challenges, and proposed novel solutions to enhance model efficiency while maintaining performance.
+The study begins by reviewing earlier approaches to facial attribute recognition using deep learning, highlighting the contributions of convolutional neural networks (CNNs) and multi-task learning frameworks.
+
+Moving forward, the paper discusses recent advancements in transformer-based architectures, such as the Vision Transformer (ViT) and Swin Transformer, in computer vision tasks and their limited application to facial attribute recognition.
+It then delves into the development of TransFa, a transformer-based model utilizing the Swin Transformer architecture, which achieves state-of-the-art performance on the CelebA dataset.
+
+The study addresses the computational complexity challenge inherent in transformer architectures by introducing the EfficientFormerV2, a lightweight transformer model optimized for efficient deployment on resource-constrained devices, particularly mobile devices.
+In my approach I leverage the EfficientFormerV2 backbone to develop a facial attribute recognition model that excels in real-time performance, efficiency, and accuracy.
+
+Furthermore, the paper provides a detailed overview of my use of data augmentation for training, enhancing dataset robustness and model performance.
+It then describes the model architecture, which incorporates the EfficientFormerV2 backbone and multiple Feedforward Neural Network (FFN) heads for multi-task learning.
+
+The study also discusses output transformation and hyperparameters optimization, outlining the choice of objective function, optimizer, batch size, and training epochs.
+The model's performance is evaluated against state-of-the-art approaches in facial attribute recognition, highlighting its competitive accuracy, while signifanctly increasing training speed, inference speed, and decreasing model size.
+
+In conclusion, the paper presents an intuitive iOS demo application showcasing real-time attribute recognition using the developed facial attribute recognition model.
+Leveraging Core ML and SwiftUI, the application delivers seamless performance on iOS devices, demonstrating the practical implications of transformer-based models in real-world scenarios.
 
 \newpage
 %==================================================================
@@ -384,10 +500,10 @@ Sample text.
 \bibliographystyle{unsrtnat}
 \bibliography{references}  %%% Uncomment this line and comment out the ``thebibliography'' section below to use the external .bib file (using bibtex) .
 
-\subsection{Attached documents}
-\label{sec:attached_documents}
+%\subsection{Attached documents}
+%\label{sec:attached_documents}
 
-Source code etc.
+%Source code etc.
 
 \end{document} 
 
